@@ -22,7 +22,7 @@ make && ./21sh
 ## Builtins Usage
 
 ```
-Setenv: setenv [variable] [variable value]
+Setenv: setenv [variable] [value]
 Unsetenv: unsetenv [variables ...]
 Echo: echo [arguments ...]
 Exit: exit [argument]
