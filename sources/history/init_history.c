@@ -6,7 +6,7 @@
 /*   By: aroulin <aroulin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/23 19:06:50 by aroulin           #+#    #+#             */
-/*   Updated: 2017/10/29 14:48:48 by jle-quel         ###   ########.fr       */
+/*   Updated: 2017/10/30 09:55:02 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ uint8_t			init_history(char **env)
 	char		*pathname;
 
 	pathname = ft_strjoin(ft_getenv(env, "HOME"), "/.21sh_history");
+	save_home(pathname);
 	if ((fd = open(pathname, O_RDONLY)) != -1)
 	{
 		command = 0;

@@ -6,7 +6,7 @@
 /*   By: aroulin <aroulin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/19 16:45:32 by aroulin           #+#    #+#             */
-/*   Updated: 2017/10/23 09:51:12 by jle-quel         ###   ########.fr       */
+/*   Updated: 2017/10/30 09:58:28 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ t_hist			*set_history_to_last(void)
 	return (hist);
 }
 
-uint8_t			b_write_history_in_file(char *path)
+uint8_t			b_write_history_in_file(void)
 {
 	t_hist		*hist;
 	int			fd;
 	int			i;
 
-	fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	fd = open(save_home(NULL), O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	hist = set_history_to_last();
 	i = -1;
 	while (hist)
@@ -46,7 +46,6 @@ uint8_t			b_write_history_in_file(char *path)
 		ft_putchar_fd(10, fd);
 		hist = hist->next;
 	}
-	free(path);
 	close(fd);
 	return (1);
 }

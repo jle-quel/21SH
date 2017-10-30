@@ -6,7 +6,7 @@
 /*   By: aroulin <aroulin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/12 17:38:25 by aroulin           #+#    #+#             */
-/*   Updated: 2017/10/28 17:14:46 by jle-quel         ###   ########.fr       */
+/*   Updated: 2017/10/30 10:01:07 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,20 @@
 *************** PUBLIC *********************************************************
 */
 
+char			*save_home(char *str)
+{
+	static char	*home;
+
+	if (str && !home)
+		home = ft_strdup(str);
+	return (home);
+}
+
 int				key_eof(t_read **read_std, unsigned long buff)
 {
 	if (!(*read_std)->cmd->c && !(*read_std)->cmd->prev)
 	{
-		b_write_history_in_file(ft_strdup("/Users/jle-quel/.21sh_history"));
+		b_write_history_in_file();
 		ft_canonique();
 		exit(EXIT_SUCCESS);
 	}

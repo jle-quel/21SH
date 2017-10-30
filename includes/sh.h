@@ -6,7 +6,7 @@
 /*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/12 09:55:21 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/29 14:46:43 by jle-quel         ###   ########.fr       */
+/*   Updated: 2017/10/30 09:58:04 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,8 @@ typedef struct		s_lexer
 	int				type;
 }					t_lexer;
 
+char			*save_home(char *str);
+
 /*
 ******************* BUILTINS ***************************************************
 */
@@ -214,7 +216,7 @@ t_hist				*create_hist(t_read *read_std);
 void				next_history(t_read **read_std);
 void				previous_history(t_read **read_std);
 void				reset_history(void);
-uint8_t				b_write_history_in_file(char *path);
+uint8_t				b_write_history_in_file(void);
 t_hist				*set_history_to_last(void);
 
 /*
