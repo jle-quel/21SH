@@ -3,26 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jle-quel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/14 16:51:36 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/29 12:57:40 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/06 16:08:27 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 23:01:44 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
 
 /*
 *************** PUBLIC *********************************************************
 */
 
-void			ft_pipe(t_ast *ast, t_line *line, t_process *process)
+void			ft_pipe(t_ast *ast, t_shell *shell, t_process *process)
 {
 	int			fd[2];
 	pid_t		father;
 
 	if (process->forked == false)
-		ft_fork(ast, line, process, &ft_pipe);
+		ft_fork(ast, shell, process, &ft_pipe);
 	else
 	{
 		pipe(fd);
@@ -32,12 +32,12 @@ void			ft_pipe(t_ast *ast, t_line *line, t_process *process)
 			if (father == 0)
 			{
 				read_pipe(fd);
-				executing(ast->right, line, process);
+				executing(ast->right, shell, process);
 			}
 			else
 			{
 				write_pipe(fd);
-				executing(ast->left, line, process);
+				executing(ast->left, shell, process);
 			}
 		}
 	}

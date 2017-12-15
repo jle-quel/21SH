@@ -6,7 +6,7 @@
 /*   By: jefferso <jefferso@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/06 06:35:48 by jefferso          #+#    #+#             */
-/*   Updated: 2017/10/28 23:29:50 by jle-quel         ###   ########.fr       */
+/*   Updated: 2017/10/30 20:03:21 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,5 +145,6 @@ bool				ft_stronly(char *str, char c);
 void				ft_canonique(void);
 void				ft_non_canonique(void);
 void				ft_init_termcap(void);
+int					ft_isalpha(int c);
 
 #endif

@@ -5,18 +5,18 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/12 09:49:18 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/29 13:59:49 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/06 19:05:12 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 19:08:51 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
 
 /*
 *********************** PRIVATE ************************************************
 */
 
-static unsigned char	error(char *str, char *err)
+static unsigned char	p_error(char *str, char *err)
 {
 	ft_putstr_fd("cd: ", 2);
 	if (str)
@@ -39,7 +39,7 @@ static void				modify_variable(char ***env, char *str,
 	temp[1] = ft_strdup(str);
 	temp[2] = ft_strdup(*pwd);
 	temp[3] = NULL;
-	seteenv(temp, env, ret);
+	ft_setenv(temp, env, ret);
 	ft_arraydel(&temp);
 	ft_memdel((void **)pwd);
 }
@@ -52,21 +52,21 @@ static unsigned char	change_direction(char *argv, char **env)
 	if (!argv || !ft_strcmp(argv, "--"))
 	{
 		direction = ft_getenv(env, "HOME");
-		return (direction ? chdir(direction) : error(NULL, " HOME not set"));
+		return (direction ? chdir(direction) : p_error(NULL, " HOME not set"));
 	}
 	if (!ft_strcmp(argv, "-"))
 	{
 		direction = ft_getenv(env, "OLDPWD");
-		return (direction ? chdir(direction) : error(NULL, "OLDPWD not set"));
+		return (direction ? chdir(direction) : p_error(NULL, "OLDPWD not set"));
 	}
 	else
 	{
 		if (access(argv, F_OK) == -1)
-			err = error(argv, "no such file or directory: ");
+			err = p_error(argv, "no such file or directory: ");
 		else
 		{
 			err = chdir(argv);
-			err == -1 ? error(argv, "permission denied: ") : 0;
+			err == -1 ? p_error(argv, "permission denied: ") : 0;
 		}
 	}
 	return (err);
@@ -76,7 +76,7 @@ static unsigned char	change_direction(char *argv, char **env)
 *********************** PUBLIC *************************************************
 */
 
-void					cd(char **command, char ***env, unsigned char *ret)
+void					ft_cd(char **command, char ***env, uint8_t *ret)
 {
 	char				err;
 	char				*oldpwd;

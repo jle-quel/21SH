@@ -1,22 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_aggre.c                                         :+:      :+:    :+:   */
+/*   aggregater.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jle-quel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/20 11:47:40 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/29 12:59:24 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/06 21:57:16 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 21:59:25 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
 
 /*
 *************** PRIVATE ********************************************************
 */
 
-static void		error(char *str, char *err, unsigned char *ret)
+static void		p_error(char *str, char *err, unsigned char *ret)
 {
 	ft_putstr_fd("21sh: ", 2);
 	ft_putstr_fd(str, 2);
@@ -42,7 +42,7 @@ static int		get_std(bool flag, char *operater, char *str,
 	}
 	if (index > 0)
 	{
-		flag == false ? error(str, "Ambiguous redirect", ret) : 0;
+		flag == false ? p_error(str, "Ambiguous redirect", ret) : 0;
 		new = ft_strsub(operater, 0, index);
 		direction = ft_atoi(new);
 		ft_memdel((void **)&new);
@@ -56,7 +56,7 @@ static int		open_fd(int *fd, char *str, unsigned char *ret)
 	if (ft_strdigit(str))
 	{
 		*fd = ft_atoi(str);
-		*fd > 3 ? error(str, "Bad file descriptor", ret) : 0;
+		*fd > 3 ? p_error(str, "Bad file descriptor", ret) : 0;
 		return (true);
 	}
 	else if (!ft_strcmp(str, "-"))
@@ -74,18 +74,18 @@ static int		open_fd(int *fd, char *str, unsigned char *ret)
 *************** PUBLIC *********************************************************
 */
 
-void			ft_aggre(t_ast *ast, t_line *line, t_process *process)
+void			ft_aggre(t_ast *ast, t_shell *shell, t_process *process)
 {
 	int			fd;
 	bool		flag;
 	int			std;
 
 	if (process->forked == false)
-		ft_fork(ast, line, process, &ft_aggre);
+		ft_fork(ast, shell, process, &ft_aggre);
 	else
 	{
 		flag = open_fd(&fd, ast->right->command[0], &process->ret);
-		std = get_std(flag, ast->operater, ast->right->command[0],
+		std = get_std(flag, ast->command[0], ast->right->command[0],
 																&process->ret);
 		if (std == -1)
 		{
@@ -95,7 +95,7 @@ void			ft_aggre(t_ast *ast, t_line *line, t_process *process)
 		}
 		else
 			dup2(fd, std);
-		executing(ast->left, line, process);
+		executing(ast->left, shell, process);
 		close(fd);
 	}
 }

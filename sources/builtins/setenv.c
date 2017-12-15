@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   setenv.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jle-quel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/12 11:58:56 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/28 22:09:33 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/06 19:02:04 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 19:09:10 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
 
 /*
 *************** PRIVATE ********************************************************
 */
 
-static void		error(void)
+static void		err(void)
 {
 	ft_putstr_fd("setenv: ", 2);
 	ft_putendl_fd("Too many arguments", 2);
@@ -54,7 +54,7 @@ static void		add_variable(char **command, char ***env)
 *************** PUBLIC *********************************************************
 */
 
-void			seteenv(char **command, char ***env, unsigned char *ret)
+void			ft_setenv(char **command, char ***env, unsigned char *ret)
 {
 	size_t		length;
 	int			place;
@@ -63,7 +63,7 @@ void			seteenv(char **command, char ***env, unsigned char *ret)
 	if (length == 1)
 		ft_putarray((const char **)*env);
 	else if (length >= 4)
-		error();
+		err();
 	else
 	{
 		place = get_env_index(command[1], *env);

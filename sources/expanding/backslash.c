@@ -5,53 +5,84 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/24 17:42:02 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/29 14:01:18 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/04 16:47:35 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 20:35:11 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
+
+/*
+*************** TOOLS **********************************************************
+*/
+
+static size_t	populate_until(char *new, char *str)
+{
+	size_t		index;
+	size_t		length;
+
+	length = 0;
+	if (new && str)
+	{
+		index = 0;
+		while (str[length])
+		{
+			if (str[length] == '\\')
+				break ;
+			new[index++] = str[length++];
+		}
+		length++;
+	}
+	return (length);
+}
 
 /*
 *************** PRIVATE ********************************************************
 */
 
-static void		do_expansion(char **str, char *rest)
+static void		expansion(char **str)
 {
+	size_t		length;
 	char		*new;
 
-	new = ft_memalloc(ft_strlen(*str));
-	ft_strncpy(new, *str, ft_strlen(*str) - ft_strlen(rest));
-	ft_strcat(new, rest + 1);
-	ft_memdel((void**)str);
-	*str = new;
+	if (str && *str)
+	{
+		new = ft_memalloc(ft_strlen(*str));
+		length = populate_until(new, *str);
+		ft_strcat(new, (*str) ? (*str) + length : NULL);
+		ft_memdel((void **)str);
+		*str = new;
+	}
 }
 
 /*
 *************** PUBLIC *********************************************************
 */
 
-void			expanding_backslash(char **str, char **env, unsigned char ret)
+void			backslash(t_parsing *node)
 {
 	size_t		index;
-	int			s_quote;
-	int			d_quote;
+	uint8_t		status;
 
-	(void)env;
-	(void)ret;
-	index = 0;
-	s_quote = 0;
-	d_quote = 0;
-	while ((*str)[index])
+	status = DEFAULT;
+	while (node)
 	{
-		chk_quotes((*str)[index], '\"', &s_quote, &d_quote);
-		chk_quotes((*str)[index], '\'', &d_quote, &s_quote);
-		if (s_quote == 0 && d_quote == 0 && (*str)[index] == '\\')
+		if (node->input)
 		{
-			do_expansion(str, *str + index);
-			(*str)[index] && (*str)[index] == '\\' ? index++ : 0;
+			index = 0;
+			while (node->input[index])
+			{
+				chk_quote(node->input[index], &status);
+				if (status & (DEFAULT | DQUOTE) && node->input[index] == '\\')
+				{
+					expansion(&node->input);
+					if (node->input[index] && node->input[index] == '\\')
+						index++;
+				}
+				else
+					index++;
+			}
 		}
-		else
-			index++;
+		node = node->next;
 	}
 }

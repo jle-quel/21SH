@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   tools.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jle-quel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/29 14:20:13 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/29 14:20:14 by jle-quel         ###   ########.fr       */
+/*   Updated: 2017/10/30 17:06:49 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
 
 /*
 ******************* PUBLIC *****************************************************
@@ -41,31 +41,4 @@ void				prompt_exec(char *command[], char **env, int fd)
 		}
 	}
 	close(fd_err);
-}
-
-size_t				get_length_redirection(char *str, unsigned int index,
-					char c)
-{
-	while (str[index])
-	{
-		if (str[index] != c)
-			break ;
-		index++;
-	}
-	return (index);
-}
-
-bool				chk_redirection(char c)
-{
-	short				index;
-	static const char	chk[4] = {'<', ';', '|', '\0'};
-
-	index = 0;
-	while (chk[index])
-	{
-		if (c == chk[index])
-			return (true);
-		index++;
-	}
-	return (false);
 }

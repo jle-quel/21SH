@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jle-quel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/12 11:49:33 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/12 12:22:01 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/06 18:52:21 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 19:03:34 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
 
 /*
-******* PUBLIC *****************************************************************
+*************** PUBLIC *********************************************************
 */
 
-void	env(char **command, char ***env, unsigned char *ret)
+void			ft_env(char **command, char ***env, uint8_t *ret)
 {
 	if (!command[1])
 		ft_putarray((const char**)*env);

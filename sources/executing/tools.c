@@ -1,27 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execution_tools.c                                  :+:      :+:    :+:   */
+/*   tools.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jle-quel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/12 13:10:46 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/28 23:38:28 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/06 15:43:15 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 22:20:51 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
-
-/*
-*************** PRIVATE ********************************************************
-*/
-
-static void		error(char *str, char *err)
-{
-	ft_putstr_fd("21sh: ", 2);
-	ft_putstr_fd(str, 2);
-	ft_putendl_fd(err, 2);
-}
+#include "sh.h"
 
 /*
 *************** PUBLIC *********************************************************
@@ -41,29 +30,29 @@ void			write_pipe(int *fd)
 	close(fd[1]);
 }
 
-void			ft_execve(t_ast *ast, t_line *line, t_process *process)
+void			ft_execve(t_ast *ast, t_shell *shell, t_process *process)
 {
 	struct stat	buffer;
 
 	if (process->forked == false)
-		ft_fork(ast, line, process, &ft_execve);
+		ft_fork(ast, shell, process, &ft_execve);
 	else
 	{
-		execve(ast->command[0], ast->command, line->env);
+		execve(ast->command[0], ast->command, shell->env);
 		lstat(ast->command[0], &buffer);
 		if (S_ISDIR(buffer.st_mode))
-			error(ast->command[0], ": is a directory");
+			error(ast->command[0], &(process->ret), DIRECTORY);
 		else if (!access(ast->command[0], F_OK) &&
 											access(ast->command[0], X_OK) == -1)
-			error(ast->command[0], ": permission denied");
+			error(ast->command[0], &(process->ret), DENIED);
 		else
-			error(ast->command[0], ": command not found");
+			error(ast->command[0], &(process->ret), COMMAND_404);
 		exit(EXIT_FAILURE);
 	}
 }
 
-void			ft_fork(t_ast *ast, t_line *line, t_process *process,
-				void (*f)(t_ast *ast, t_line *line, t_process *process))
+void			ft_fork(t_ast *ast, t_shell *shell, t_process *process,
+				void (*f)(t_ast *ast, t_shell *shell, t_process *process))
 {
 	int			status;
 	pid_t		father;
@@ -73,7 +62,7 @@ void			ft_fork(t_ast *ast, t_line *line, t_process *process,
 	{
 		process->forked = true;
 		if (father == 0)
-			f(ast, line, process);
+			f(ast, shell, process);
 		else
 		{
 			wait(&status);

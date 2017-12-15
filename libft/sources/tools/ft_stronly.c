@@ -6,7 +6,7 @@
 /*   By: jle-quel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/19 14:13:01 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/19 14:24:23 by jle-quel         ###   ########.fr       */
+/*   Updated: 2017/11/02 12:16:21 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ bool			ft_stronly(char *str, char c)
 				return (false);
 			index++;
 		}
-		return (true);
 	}
-	return (false);
+	return (true);
 }

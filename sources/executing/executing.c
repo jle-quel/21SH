@@ -3,54 +3,56 @@
 /*                                                        :::      ::::::::   */
 /*   executing.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jle-quel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/17 16:06:34 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/29 12:57:07 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/06 15:31:41 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 21:56:46 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
+
+static const t_exec		g_functions[] =
+{
+	(t_exec){VALUE_SEMI_COLON, &ft_semicolon},
+	(t_exec){VALUE_AND_IF, &ft_and},
+	(t_exec){VALUE_OR_IF, &ft_or},
+	(t_exec){VALUE_PIPELINE, &ft_pipe},
+	(t_exec){VALUE_LESS, &ft_left},
+	(t_exec){VALUE_DLESS, &ft_doubleleft},
+	(t_exec){VALUE_GREAT, &ft_right},
+	(t_exec){VALUE_DGREAT, &ft_right},
+	(t_exec){VALUE_GREAT_AND, &ft_aggre}
+};
 
 static const t_blts		g_builtins[] =
 {
 	(t_blts){"echo", &ft_echo},
-	(t_blts){"env", &env},
-	(t_blts){"exit", &exiit},
-	(t_blts){"setenv", &seteenv},
-	(t_blts){"unsetenv", &unseteenv},
-	(t_blts){"cd", &cd}
-};
-
-static const t_exec		g_functions[] =
-{
-	(t_exec){COLON, &colon},
-	(t_exec){AND, &ft_and},
-	(t_exec){OR, &ft_or},
-	(t_exec){PIPE, &ft_pipe},
-	(t_exec){LEFT, &ft_left},
-	(t_exec){RIGHT, &right},
-	(t_exec){AGGRE, &ft_aggre}
+	(t_blts){"env", &ft_env},
+	(t_blts){"exit", &ft_exit},
+	(t_blts){"setenv", &ft_setenv},
+	(t_blts){"unsetenv", &ft_unsetenv},
+	(t_blts){"cd", &ft_cd}
 };
 
 /*
 *************** PRIVATE ********************************************************
 */
 
-static void		functions(t_ast *ast, t_line *line, t_process *process)
+static void		functions(t_ast *ast, t_shell *shell, t_process *process)
 {
 	short		index;
 
 	index = 0;
-	while (index < 7)
+	while (index < 9)
 	{
-		if (ast->type == g_functions[index].type)
-			g_functions[index].f(ast, line, process);
+		if (ast->value == g_functions[index].value)
+			g_functions[index].f(ast, shell, process);
 		index++;
 	}
 }
 
-static bool		builtins(t_ast *ast, t_line *line, t_process *process)
+static bool		builtins(t_ast *ast, t_shell *shell, t_process *process)
 {
 	short		index;
 
@@ -59,7 +61,7 @@ static bool		builtins(t_ast *ast, t_line *line, t_process *process)
 	{
 		if (ft_strcmp(ast->command[0], g_builtins[index].str) == 0)
 		{
-			g_builtins[index].f(ast->command, &line->env, &process->ret);
+			g_builtins[index].f(ast->command, &shell->env, &process->ret);
 			process->forked == true ? exit(EXIT_SUCCESS) : 0;
 			return (true);
 		}
@@ -72,13 +74,13 @@ static bool		builtins(t_ast *ast, t_line *line, t_process *process)
 *************** PUBLIC *********************************************************
 */
 
-void			executing(t_ast *ast, t_line *line, t_process *process)
+void			executing(t_ast *ast, t_shell *shell, t_process *process)
 {
 	if (ast)
 	{
-		if (ast->operater)
-			functions(ast, line, process);
-		else if (builtins(ast, line, process) == false)
-			ft_execve(ast, line, process);
+		if (ast->value)
+			functions(ast, shell, process);
+		else if (builtins(ast, shell, process) == false)
+			ft_execve(ast, shell, process);
 	}
 }

@@ -5,62 +5,91 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/24 12:15:59 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/29 14:07:41 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/04 15:23:14 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 22:21:32 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
+
+/*
+*************** TOOLS **********************************************************
+*/
+
+char			*get_variable(char *str)
+{
+	size_t		index;
+	char		*new;
+
+	new = NULL;
+	if (str)
+	{
+		index = 0;
+		while (str[index])
+		{
+			if (str[index] == '\"' || str[index] == ' ' || str[index] == '/')
+				break ;
+			index++;
+		}
+		new = index ? ft_strsub(str, 1, index - 1) : NULL;
+	}
+	return (new);
+}
 
 /*
 *************** PRIVATE ********************************************************
 */
 
-static void		do_expansion(char **str, char *rest, char **env)
+bool			expansion(char **str, char *rest, char **env)
 {
-	size_t		length;
 	char		*temp;
-	char		*var;
+	char		*variable;
 	char		*new;
 
-	if (rest[1] && rest[1] != ' ')
+	temp = get_variable(rest);
+	variable = ft_getenv(env, temp);
+	if (variable && ft_strlen(variable))
 	{
-		length = ft_strrlen(rest, ' ', 1);
-		temp = ft_strsub(rest, 1, length);
-		var = ft_getenv(env, temp);
-		new = ft_memalloc(ft_strlen(*str) + ft_strlen(var));
-		ft_strncpy(new, *str, ft_strlen(*str) - ft_strlen(rest));
-		ft_strcat(new, var);
-		ft_strcat(new, rest + ft_strlen(temp) + 1);
-		ft_memdel((void**)&temp);
-		ft_memdel((void**)str);
+		new = (char *)ft_memalloc(sizeof(char) *
+		(ft_strlen(*str) + ft_strlen(variable) + 1));
+		ft_strncpy(new, *str, ft_strrlen(*str, '$', 0));
+		ft_strcat(new, variable);
+		ft_strcat(new, rest ? rest + (ft_strlen(temp) + 1) : NULL);
+		ft_memdel((void **)str);
 		*str = new;
+		ft_memdel((void **)&temp);
+		return (true);
 	}
+	ft_memdel((void **)&temp);
+	return (false);
 }
 
 /*
-*************** PUBLIC *********************************************************
+*************** PUBLIC *****************************************************
 */
 
-void			expanding_var(char **str, char **env, unsigned char ret)
+void			variable(t_parsing *node, char **env)
 {
 	size_t		index;
-	int			s_quote;
-	int			d_quote;
+	uint8_t		status;
+	t_parsing	*temp;
 
-	(void)ret;
-	index = 0;
-	s_quote = 0;
-	d_quote = 0;
-	while ((*str)[index])
+	status = DEFAULT;
+	temp = node;
+	while (node)
 	{
-		if (chk_slash((*str), index - 1) == true)
+		if (node->input)
 		{
-			chk_quotes((*str)[index], '\"', &s_quote, &d_quote);
-			chk_quotes((*str)[index], '\'', &d_quote, &s_quote);
-			if (s_quote == 0 && (*str)[index] == '$')
-				do_expansion(str, *str + index, env);
+			index = 0;
+			while (node->input[index])
+			{
+				chk_quote(node->input[index], &status);
+				if (status & (DEFAULT | DQUOTE) && node->input[index] == '$')
+					if (expansion(&node->input, node->input + index, env))
+						variable(temp, env);
+				index++;
+			}
 		}
-		index++;
+		node = node->next;
 	}
 }

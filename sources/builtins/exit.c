@@ -5,23 +5,16 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/12 11:52:42 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/29 14:00:55 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/06 18:54:23 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 19:07:35 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
 
 /*
 *************** PRIVATE ********************************************************
 */
-
-static void		error(char *str, char *err)
-{
-	ft_putstr_fd("Exit: ", 2);
-	ft_putstr_fd(str, 2);
-	ft_putendl_fd(err, 2);
-}
 
 static bool		chk(char *str)
 {
@@ -41,20 +34,22 @@ static bool		chk(char *str)
 *************** PUBLIC *********************************************************
 */
 
-void			exiit(char **command, char ***env, unsigned char *ret)
+void			ft_exit(char **command, char ***env __attribute__((unused)),
+				uint8_t *ret)
 {
 	size_t		length;
 
-	(void)env;
 	length = ft_arraylen((const char **)command) - 1;
 	if (length == 1)
 	{
 		if (chk(command[1]) == true)
 			exit((unsigned char)ft_atoi(command[1]));
-		error(command[1], ": numeric argument required");
+		error(command[1], ret, EXIT_DIGIT);
 	}
 	else if (length > 1)
-		error(command[length], ": too many arguments");
-	else
-		exit(*ret);
+	{
+		error(command[1], ret, EXIT_ARG);
+		return ;
+	}
+	exit(*ret);
 }

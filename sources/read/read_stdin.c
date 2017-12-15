@@ -6,7 +6,7 @@
 /*   By: aroulin <aroulin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 14:40:38 by aroulin           #+#    #+#             */
-/*   Updated: 2017/10/29 16:23:59 by jle-quel         ###   ########.fr       */
+/*   Updated: 2017/11/02 13:04:55 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,12 @@ static int		chk_and_print(t_read **read_std)
 	return (1);
 }
 
-static void		initialize_fct(t_read **read_std, unsigned char flags,
-				t_line *line, t_process *process)
+static void		initialize_fct(t_read **read_std __attribute__((unused)),
+				unsigned char flags, t_shell *shell, t_process *process)
 {
-	(void)read_std;
 	ft_non_canonique();
 	signal_reception(0);
-	(*read_std)->cur = prompt(flags | PRINT, line->env, &(process->ret));
+	(*read_std)->cur = prompt(flags | PRINT, shell->env, &(process->ret));
 }
 
 static void		inline_print_(t_read **read_std, unsigned long *buff)
@@ -71,7 +70,7 @@ static void		inline_other(t_read **read_std, unsigned long *buff,
 *************** PUBLIC *********************************************************
 */
 
-void			read_stdin(unsigned char flags, t_line *line,
+t_cmd			*read_stdin(unsigned char flags, t_shell *shell,
 				t_process *process)
 {
 	t_read					*read_std;
@@ -79,7 +78,7 @@ void			read_stdin(unsigned char flags, t_line *line,
 	static unsigned long	buf;
 
 	read_std = init_struct_for_read();
-	initialize_fct(&read_std, flags, line, process);
+	initialize_fct(&read_std, flags, shell, process);
 	inline_print_(&read_std, &buf);
 	while (!read_std->finish && read(STDIN_FILENO, &buf, sizeof(unsigned long)))
 	{
@@ -89,10 +88,10 @@ void			read_stdin(unsigned char flags, t_line *line,
 		index = -1;
 		while (g_tab_are_key[++index].key)
 			if (g_tab_are_key[index].key == buf)
-				inline_other(&read_std, &buf, g_tab_are_key[index].function);
+				inline_other(&read_std, &buf, g_tab_are_key[index].f);
 		if ((read_std)->finish || signal_reception(-1))
 			break ;
 		buf = 0;
 	}
-	line->str = finish_read_std(&read_std);
+	return (finish_read_std(&read_std));
 }

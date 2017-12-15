@@ -1,42 +1,65 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   left.c                                             :+:      :+:    :+:   */
+/*   doubleleft.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/06 16:15:43 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/11/06 18:47:42 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/06 17:40:16 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 18:47:57 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
 /*
+*************** TOOLS **********************************************************
+*/
+
+static bool		lstcmp(t_cmd *cmd, char *str)
+{
+	while (cmd && cmd->c && *str)
+	{
+		if (cmd->c != *str)
+			return (false);
+		cmd = cmd->next;
+		str++;
+	}
+	return (true);
+}
+
+static void		printcmd(t_cmd *cmd)
+{
+	while (cmd && cmd->c)
+	{
+		ft_putchar(cmd->c);
+		cmd = cmd->next;
+	}
+	ft_putchar(10);
+}
+
+/*
 *************** PRIVATE ********************************************************
 */
 
-static void		get_read(t_ast *ast, uint8_t *ret)
+static void		heredoc(t_ast *ast, t_shell *shell, t_process *process)
 {
-	int			fd;
-	char		*str;
+	t_cmd		*cmd;
 
-	fd = open(ast->command[0], O_RDWR);
-	if (fd > 0)
+	while (101010)
 	{
-		while (gnl(fd, &str))
+		cmd = read_stdin(HEREDOC, shell, process);
+		if (cmd)
 		{
-			ft_putendl(str);
-			ft_memdel((void **)&str);
+			if (lstcmp(cmd, ast->command[0]))
+			{
+				cmddel(&cmd);
+				break ;
+			}
+			printcmd(cmd);
+			cmddel(&cmd);
 		}
 	}
-	else
-	{
-		error(ast->command[0], ret, FILE_404);
-		close(fd);
-		exit(EXIT_FAILURE);
-	}
-	close(fd);
 	exit(EXIT_SUCCESS);
 }
 
@@ -44,14 +67,14 @@ static void		get_read(t_ast *ast, uint8_t *ret)
 *************** PUBLIC *********************************************************
 */
 
-void			ft_left(t_ast *ast, t_shell *shell, t_process *process)
+void			ft_doubleleft(t_ast *ast, t_shell *shell, t_process *process)
 {
 	int			status;
 	int			fd[2];
 	pid_t		father;
 
 	if (process->forked == false)
-		ft_fork(ast, shell, process, &ft_left);
+		ft_fork(ast, shell, process, &ft_doubleleft);
 	else
 	{
 		pipe(fd);
@@ -59,7 +82,7 @@ void			ft_left(t_ast *ast, t_shell *shell, t_process *process)
 		if (father == 0)
 		{
 			write_pipe(fd);
-			get_read(ast->right, &(process->ret));
+			heredoc(ast->right, shell, process);
 		}
 		else
 		{

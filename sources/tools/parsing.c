@@ -1,38 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   split_tools.c                                      :+:      :+:    :+:   */
+/*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jle-quel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/29 12:39:48 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/29 12:45:31 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/04 12:05:58 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/05 11:47:47 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
 
 /*
 *************** PUBLIC *********************************************************
 */
 
-void			do_skip(char *str, size_t *index)
+uint8_t			chk_quote(char c, uint8_t *status)
 {
-	while (str[*index])
+	if (c)
 	{
-		if (str[*index] != ' ')
-			break ;
-		*index += 1;
+		if (c == '\'' && !(*status & DQUOTE))
+			*status = *status & QUOTE ? DEFAULT : QUOTE;
+		else if (c == '\"' && !(*status & QUOTE))
+			*status = *status & DQUOTE ? DEFAULT : DQUOTE;
 	}
-}
-
-void			skip_quote(char *str, size_t *index, char c)
-{
-	*index += 1;
-	while (str[*index])
-	{
-		if (str[*index] == c)
-			break ;
-		*index += 1;
-	}
+	return (*status);
 }

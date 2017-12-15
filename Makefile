@@ -6,39 +6,43 @@
 #    By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/06/02 12:01:32 by jle-quel          #+#    #+#              #
-#    Updated: 2017/10/29 14:40:54 by jle-quel         ###   ########.fr        #
+#    Updated: 2017/11/06 23:00:33 by jle-quel         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = 21sh
 
-FLAGS += -Wall -Wextra -Werror -O2 -I includes
+FLAGS += -Wall -Wextra -Werror -I includes
 
-SRC =	sources/builtins/echo.c                 \
-        sources/builtins/env.c                  \
-        sources/builtins/exit.c                 \
-        sources/builtins/setenv.c               \
-        sources/builtins/unsetenv.c             \
-        sources/builtins/cd.c                   \
-                                                \
-        sources/core/main.c	                    \
-        sources/core/initiate.c                 \
-                                                \
-        sources/executing/executing.c           \
-        sources/executing/left.c  		        \
-        sources/executing/right.c  		        \
-        sources/executing/colon.c  		        \
-        sources/executing/pipe.c  		        \
-        sources/executing/ft_and.c  	        \
-        sources/executing/ft_or.c  	            \
-        sources/executing/ft_aggre.c  	        \
+SANITIZE += -g3 -fsanitize=address
+
+SRC =	sources/builtins/echo.c					\
+		sources/builtins/env.c					\
+		sources/builtins/exit.c					\
+		sources/builtins/cd.c					\
+		sources/builtins/setenv.c				\
+		sources/builtins/unsetenv.c				\
 												\
+		sources/core/main.c						\
+		sources/core/core.c						\
+		sources/core/initiate.c					\
+												\
+		sources/executing/executing.c			\
+		sources/executing/semicolon.c			\
+		sources/executing/and.c					\
+		sources/executing/or.c					\
+		sources/executing/pipe.c				\
+		sources/executing/left.c				\
+		sources/executing/doubleleft.c			\
+		sources/executing/right.c				\
+		sources/executing/aggregater.c			\
+		sources/executing/tools.c				\
+												\
+		sources/expanding/split.c				\
 		sources/expanding/tilde.c				\
-		sources/expanding/pid.c					\
-		sources/expanding/return.c				\
 		sources/expanding/variable.c			\
-		sources/expanding/quote.c				\
 		sources/expanding/backslash.c			\
+		sources/expanding/tools.c				\
 												\
 		sources/history/copy_cmd.c				\
 		sources/history/gbl_save_history.c		\
@@ -49,22 +53,21 @@ SRC =	sources/builtins/echo.c                 \
 		sources/history/reset_history.c			\
 		sources/history/write_history.c			\
 												\
-	    sources/parsing/lexing.c                \
-	    sources/parsing/trim_str.c              \
-	    sources/parsing/parsing_str.c           \
-        sources/parsing/parsing_operaters.c     \
-        sources/parsing/parsing_words.c         \
-        sources/parsing/parsing_stds.c          \
-        sources/parsing/parsing_redirections.c  \
+		sources/lexing/tokenisation.c			\
+		sources/lexing/lexer.c					\
+		sources/lexing/token_recognition.c		\
 												\
-		sources/populating/operaters.c          \
-		sources/populating/commands.c           \
-		sources/populating/split.c              \
+		sources/parsing/parsing.c				\
+												\
+		sources/populating/populating.c			\
+		sources/populating/access.c				\
 												\
         sources/prompt/create.c                 \
         sources/prompt/branch.c                 \
         sources/prompt/prompt.c                 \
+		sources/prompt/tools.c					\
                                                 \
+		sources/read/termcap.c					\
 		sources/read/check_cmd.c				\
 		sources/read/init_fd.c					\
 		sources/read/finish_read_std.c			\
@@ -95,14 +98,11 @@ SRC =	sources/builtins/echo.c                 \
 												\
 		sources/signal/signal.c					\
 												\
-        sources/tools/parsing_tools.c           \
-        sources/tools/env_tools.c               \
-        sources/tools/ast_tools.c               \
-        sources/tools/execution_tools.c         \
-        sources/tools/termcap_tools.c 	        \
-        sources/tools/remove_quote.c 	        \
-        sources/tools/split_tools.c 	        \
-		sources/tools/tools.c 			        \
+		sources/tools/list.c					\
+		sources/tools/error.c					\
+		sources/tools/parsing.c					\
+		sources/tools/tree.c					\
+		sources/tools/env.c						\
 
 OBJ = $(SRC:.c=.o)
 
@@ -113,27 +113,27 @@ LIBFT = libft/libft.a
 all: $(NAME)
 
 $(OBJ): %.o: %.c
-	@gcc -c $(FLAGS) $< -o $@
+	@clang -c $(FLAGS) $< -o $@
+
+$(LIBLOG):
+	@make -C logger
 
 $(LIBFT):
 	@make -C libft
 
 $(NAME): $(LIBFT) $(OBJ)
-	@gcc $(OBJ) $(LIBFT) -ltermcap -o $(NAME)
-	@echo "\033[32mCompiled Executable From 21sh\033[0m"
+	@clang $(OBJ) $(FLAGS) $(LIBFT) $(LOGGER) -ltermcap -o $(NAME)
 
-fs:
-	gcc $(FLAGS) -g3 -fsanitize=address -L libft -lft $(OBJ) -ltermcap -o $(NAME)
+fs: $(LIBFT) $(OBJ)
+	@clang $(OBJ) $(FLAGS) $(SANITIZE) $(LIBFT) $(LOGGER) -ltermcap -o $(NAME)
 
 clean:
 	@rm -rf $(OBJ)
 	@make -C libft clean
-	@echo "\033[32mRemoved Object Files From 21sh\033[0m"
 
 fclean: clean
 	@rm -rf $(NAME)
 	@make -C libft fclean
-	@echo "\033[32mRemoved Executable From 21sh\033[0m"
 
 re: fclean
 	@make

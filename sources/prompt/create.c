@@ -6,7 +6,7 @@
 /*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/12 09:13:55 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/29 14:11:03 by jle-quel         ###   ########.fr       */
+/*   Updated: 2017/10/30 17:08:40 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,13 @@ static char		*populate_prompt(const char *prompt, const char *branch,
 *************** PUBLIC *********************************************************
 */
 
-char			*create_prompt(char **env, unsigned char *ret)
+char			*create_prompt(char **env __attribute__((unused)),
+				unsigned char *ret)
 {
 	static char	*new;
 	char		*prompt;
 	char		*branch;
 
-	(void)env;
 	ft_memdel((void **)&new);
 	prompt = get_prompt(env);
 	branch = get_branch(env);

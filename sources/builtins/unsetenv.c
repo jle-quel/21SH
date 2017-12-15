@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   unsetenv.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jle-quel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/12 12:46:14 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/28 22:10:29 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/06 19:03:59 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 19:04:46 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
 
 /*
 *************** PRIVATE ********************************************************
 */
 
-static void		error(void)
+static void		err(void)
 {
 	ft_putstr_fd("Unsetenv: ", 2);
 	ft_putendl_fd("Too few arguments", 2);
@@ -45,7 +45,7 @@ static void		remove_variable(int place, char ***env)
 *************** PUBLIC *********************************************************
 */
 
-void			unseteenv(char **command, char ***env, unsigned char *ret)
+void			ft_unsetenv(char **command, char ***env, uint8_t *ret)
 {
 	size_t		index;
 	int			place;
@@ -61,6 +61,6 @@ void			unseteenv(char **command, char ***env, unsigned char *ret)
 		}
 	}
 	else
-		error();
+		err();
 	*ret = 0;
 }

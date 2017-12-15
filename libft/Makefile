@@ -6,7 +6,7 @@
 #    By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/03/13 09:11:48 by jle-quel          #+#    #+#              #
-#    Updated: 2017/10/28 16:20:45 by jle-quel         ###   ########.fr        #
+#    Updated: 2017/10/30 20:03:35 by jle-quel         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -81,6 +81,7 @@ SRC = 	sources/allocation/gnl.c				\
 		sources/tools/ft_canonique.c            \
 		sources/tools/ft_non_canonique.c        \
 		sources/tools/ft_init_termcap.c         \
+		sources/tools/ft_isalpha.c  	        \
 
 all: $(NAME)
 

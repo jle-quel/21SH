@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jle-quel <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/12 11:49:18 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/28 22:06:46 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/06 18:49:57 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 19:03:38 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
 
 /*
-******* PUBLIC *****************************************************************
+*************** PUBLIC *********************************************************
 */
 
-void	ft_echo(char **command, char ***env __attribute__((unused)),
-		unsigned char *ret)
+void			ft_echo(char **command, char ***env __attribute__((unused)),
+				uint8_t *ret)
 {
 	size_t		index;
 

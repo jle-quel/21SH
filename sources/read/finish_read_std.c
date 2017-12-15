@@ -6,7 +6,7 @@
 /*   By: aroulin <aroulin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/24 16:43:48 by aroulin           #+#    #+#             */
-/*   Updated: 2017/10/29 00:04:43 by jle-quel         ###   ########.fr       */
+/*   Updated: 2017/11/06 22:18:02 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,27 +16,18 @@
 *************** PRIVATE ********************************************************
 */
 
-static char		*convert_to_str(t_cmd *cmd)
+t_cmd			*copy_command(t_cmd *cmd)
 {
-	int			len;
-	char		*line;
+	t_cmd		*cpy;
 
-	len = 0;
-	while (cmd->next)
-	{
-		len++;
-		cmd = cmd->next;
-	}
-	line = (char *)ft_memalloc(sizeof(char) * (len + 1));
 	cmd = first_cmd(cmd, 1);
-	len = 0;
+	cpy = create_element('\0');
 	while (cmd->c)
 	{
-		line[len] = cmd->c;
+		key_print_fct(cpy, cmd->c);
 		cmd = cmd->next;
-		len++;
 	}
-	return (line);
+	return (cpy);
 }
 
 static int		empty_cmd(t_cmd *cmd)
@@ -50,9 +41,9 @@ static int		empty_cmd(t_cmd *cmd)
 	return (1);
 }
 
-static char		*return_line(t_read **read_std)
+static t_cmd	*return_line(t_read **read_std)
 {
-	char		*line;
+	t_cmd		*cmd;
 
 	if (*read_std)
 	{
@@ -61,10 +52,10 @@ static char		*return_line(t_read **read_std)
 			make_list_hist((*read_std));
 		key_end_(read_std, 0);
 		print_struct(*read_std);
-		line = convert_to_str(first_cmd((*read_std)->cmd, 1));
+		cmd = copy_command((*read_std)->cmd);
 		if (get_len_prompt(-42) == -2)
 			memdel_read(read_std);
-		return (line);
+		return (first_cmd(cmd, 1));
 	}
 	return (NULL);
 }
@@ -73,7 +64,7 @@ static char		*return_line(t_read **read_std)
 *************** PUBLIC *********************************************************
 */
 
-char			*finish_read_std(t_read **read_std)
+t_cmd			*finish_read_std(t_read **read_std)
 {
 	t_cmd		*tmp;
 

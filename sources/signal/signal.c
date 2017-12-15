@@ -5,12 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/24 12:58:32 by jle-quel          #+#    #+#             */
-/*   Updated: 2017/10/28 18:52:20 by jle-quel         ###   ########.fr       */
+/*   Created: 2017/11/06 22:00:37 by jle-quel          #+#    #+#             */
+/*   Updated: 2017/11/06 22:28:59 by jle-quel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/sh.h"
+#include "sh.h"
 
 /*
 *************** PRIVATE ********************************************************
@@ -23,12 +23,14 @@ void			handle(int sig)
 		ioctl(STDIN_FILENO, TIOCSTI, "\2\0");
 		signal_reception(1);
 	}
-	if (sig == SIGWINCH)
+	else if (sig == SIGWINCH)
 	{
 		ft_termcap("cl", 0);
 		tgetent(NULL, handler(NULL));
 		ioctl(STDIN_FILENO, TIOCSTI, "\0");
 	}
+	else
+		signal(sig, SIG_DFL);
 }
 
 /*
@@ -40,7 +42,7 @@ void			ft_signal(void)
 	int			index;
 
 	index = 0;
-	while (index < 31)
+	while (index < 32)
 	{
 		signal(index, &handle);
 		index++;
